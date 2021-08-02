@@ -1,7 +1,6 @@
+const config = {
+  mongoDbUri: process.env.MONGO_DB_URL,
+  secretKey: process.env.JWT_SECRET,
+};
 
-const config =  {
-mongoDbUri: process.env.MONGO_DB_URL
-}
-
-export default config
-
+export default config;

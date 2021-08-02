@@ -1,32 +1,33 @@
-
+import constants from "../utils/constants";
 
 export default class BaseResponse {
+  constructor(props: {
+    success?: boolean;
 
+    message?: string;
 
-    constructor(props:
+    statusCode?: number;
 
-        {success?: boolean,
+    data?: any;
 
-        message?: string,
+    error?: { [key: string]: string };
+  }) {
+    this.data = props.data;
+    this.success = props.success === undefined ? true : props.success;
+    this.statusCode = props.statusCode || 200;
+    this.message =
+      props.message ||
+      (this.success ? "request was successful" : constants.generalError);
+    this.error = props.error;
+  }
 
-        statusCode?: number,
+  success: boolean;
 
-        data?: any
-    }) {
+  message: string;
 
-          this.data = props.data
-          this.success = props.success === undefined ? true : props.success
-          this.statusCode = props.statusCode || 200
-          this.message = props.message || 'request was successful'
+  statusCode: number;
 
-    }
+  data?: any;
 
-    success: boolean
-
-    message: string
-
-    statusCode: number
-
-    data?: any
-
+  error?: { [key: string]: string };
 }
