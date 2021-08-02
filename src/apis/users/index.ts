@@ -8,6 +8,7 @@ import { login, loginValidateEmail, loginValidatePassword } from "./login";
 
 import {
   register,
+  registerValidateConfirmPassword,
   registerValidateEmail,
   registerValidateName,
   registerValidatePassword,
@@ -24,6 +25,7 @@ usersRouter.post(
   registerValidateName(),
   registerValidateEmail(),
   registerValidatePassword(),
+  registerValidateConfirmPassword(),
   register
 );
 
@@ -37,14 +39,5 @@ usersRouter.post(
   loginValidatePassword(),
   login
 );
-
-usersRouter.get("/current", authMiddleware, (req, res) => {
-  try {
-    const user = getAuthenticatedUser(req);
-    res.json({ user });
-  } catch (error) {
-    res.status(401).json({ error: error.message || "unauthenticated" });
-  }
-});
 
 export default usersRouter;

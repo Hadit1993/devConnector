@@ -65,4 +65,4 @@ const getAuthenticatedUser = (req: Request) => {
   return req.user as IUser & Document<any, any, IUser>;
 };
 
-export { UserModel, getAuthenticatedUser };
+export { UserModel, getAuthenticatedUser, User };
