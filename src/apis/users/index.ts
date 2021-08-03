@@ -1,18 +1,17 @@
 import { Router } from "express";
-import passport from "passport";
-import BaseResponse from "../../models/BaseResponse";
-import { getAuthenticatedUser } from "../../models/User";
-import authMiddleware from "../middlewares/authMiddleware";
-
-import { login, loginValidateEmail, loginValidatePassword } from "./login";
+import {
+  loginValidateEmail,
+  loginValidatePassword,
+} from "../../validation/users/login";
 
 import {
-  register,
-  registerValidateConfirmPassword,
-  registerValidateEmail,
   registerValidateName,
+  registerValidateEmail,
   registerValidatePassword,
-} from "./register";
+  registerValidateConfirmPassword,
+} from "../../validation/users/register";
+import login from "./login";
+import register from "./register";
 
 const usersRouter = Router();
 

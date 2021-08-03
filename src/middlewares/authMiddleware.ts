@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import passport from "passport";
-import BaseResponse from "../../models/BaseResponse";
+import BaseResponse from "../models/BaseResponse";
 
 export default function authMiddleware(
   req: Request,

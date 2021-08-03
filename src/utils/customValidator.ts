@@ -9,4 +9,13 @@ const parseValidationError = (errors: ValidationError[]) => {
   return parsedError;
 };
 
-export { parseValidationError };
+const removeEmpty = (obj: any) => {
+  Object.entries(obj).forEach(
+    ([key, val]) =>
+      (val && typeof val === "object" && removeEmpty(val)) ||
+      ((val === undefined || val === "") && delete obj[key])
+  );
+  return obj;
+};
+
+export { parseValidationError, removeEmpty };

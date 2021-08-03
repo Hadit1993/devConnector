@@ -1,7 +1,8 @@
-import { Schema, Model, model } from "mongoose";
+import { Schema, Model, model, PopulatedDoc, Document } from "mongoose";
+import { User } from "./User";
 
 interface Profile {
-  user?: string;
+  user?: PopulatedDoc<User & Document>;
   handle: string;
   company?: string;
   website?: string;
@@ -40,7 +41,15 @@ interface Profile {
   date: Date;
 }
 
-const ProfileSchema = new Schema<Profile, Model<Profile>, Profile>({
+interface IProfile extends Model<Profile> {
+  findProfile(query: {
+    user?: any;
+    handle?: string;
+    id?: string;
+  }): Promise<(Profile & Document<any, any, Profile>) | null>;
+}
+
+const ProfileSchema = new Schema<Profile, IProfile, Profile>({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -168,6 +177,15 @@ const ProfileSchema = new Schema<Profile, Model<Profile>, Profile>({
   },
 });
 
-const ProfileModel = model<Profile>("Profile", ProfileSchema);
+ProfileSchema.statics.findProfile = async function (query: any) {
+  const profile = await this.findOne(query).populate("user", [
+    "name",
+    "avatar",
+  ]);
+
+  return profile;
+};
+
+const ProfileModel = model<Profile, IProfile>("Profile", ProfileSchema);
 
 export { ProfileModel, Profile };

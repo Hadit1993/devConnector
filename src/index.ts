@@ -24,6 +24,7 @@ mongoose
 app.use(passport.initialize());
 passport.use(strategy);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", usersRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/posts", postsRouter);

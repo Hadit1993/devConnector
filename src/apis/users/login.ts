@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { body, validationResult } from "express-validator";
 import { parseValidationError } from "../../utils/customValidator";
 
-async function login(req: Request, res: Response) {
+export default async function login(req: Request, res: Response) {
   const { email, password } = req.body;
   const error: { [key: string]: string } = {};
   let response: BaseResponse;
@@ -47,16 +47,3 @@ async function login(req: Request, res: Response) {
     res.status(error.statusCode || 400).json(response);
   }
 }
-
-const loginValidateEmail = () => {
-  return body("email")
-    .isEmail()
-    .withMessage("email is invalid")
-    .normalizeEmail();
-};
-
-const loginValidatePassword = () => {
-  return body("password").not().isEmpty().withMessage("password is invalid");
-};
-
-export { login, loginValidateEmail, loginValidatePassword };

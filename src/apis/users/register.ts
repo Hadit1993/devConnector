@@ -5,9 +5,9 @@ import gravatar from "gravatar";
 import bcrypt from "bcryptjs";
 import { parseValidationError } from "../../utils/customValidator";
 
-import { body, validationResult } from "express-validator";
+import { validationResult } from "express-validator";
 
-async function register(req: Request, res: Response) {
+export default async function register(req: Request, res: Response) {
   let response: BaseResponse;
   const { email, name, password } = req.body;
 
@@ -36,7 +36,7 @@ async function register(req: Request, res: Response) {
     const token = newUser.generateAuthToken();
 
     response = new BaseResponse({ data: { user: newUser, token } });
-    res.json(response);
+    res.status(201).json(response);
   } catch (error) {
     response = new BaseResponse({ success: false, statusCode: 400, error });
     if (error.parsedError) {
@@ -50,46 +50,3 @@ async function register(req: Request, res: Response) {
     res.status(400).json(response);
   }
 }
-
-const registerValidateName = () =>
-  body("name")
-    .trim()
-    .isLength({ min: 3, max: 30 })
-    .withMessage("name must be between 2 and 30 characters");
-
-const registerValidateEmail = () =>
-  body("email")
-    .isEmail()
-    .withMessage("email is invalid")
-    .normalizeEmail()
-    .custom(async (email) => {
-      const user = await UserModel.findOne({ email });
-      if (user) throw "email already in use";
-
-      return true;
-    });
-
-const registerValidatePassword = () =>
-  body("password")
-    .trim()
-    .isLength({ min: 8 })
-    .withMessage("password must be at least 8 characters");
-
-const registerValidateConfirmPassword = () =>
-  body("confirmPassword")
-    .trim()
-    .custom((value, { req }) => {
-      const { password } = req.body;
-      if (value !== password)
-        throw "password confirmation does not match password";
-
-      return true;
-    });
-
-export {
-  register,
-  registerValidateName,
-  registerValidateEmail,
-  registerValidatePassword,
-  registerValidateConfirmPassword,
-};

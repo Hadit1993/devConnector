@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { use } from "passport";
 import BaseResponse from "../../models/BaseResponse";
 import { ProfileModel } from "../../models/Profile";
 import { getAuthenticatedUser } from "../../models/User";
@@ -8,7 +9,7 @@ export default async function getProfile(req: Request, res: Response) {
   let response: BaseResponse;
 
   try {
-    const profile = await ProfileModel.findOne({ user: user.id });
+    const profile = await ProfileModel.findProfile({ user: user.id });
     if (!profile) {
       throw { statusCode: 404, message: "no profile found" };
     }

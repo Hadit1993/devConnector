@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { validationResult } from "express-validator";
 import BaseResponse from "../../models/BaseResponse";
 
 import { ProfileModel } from "../../models/Profile";
 import { getAuthenticatedUser } from "../../models/User";
-import { parseValidationError } from "../../utils/customValidator";
+import { parseValidationError, removeEmpty } from "../../utils/customValidator";
 
-async function createProfile(req: Request, res: Response) {
+export default async function createProfile(req: Request, res: Response) {
   let response: BaseResponse;
   try {
     const errors = validationResult(req);
@@ -17,15 +17,16 @@ async function createProfile(req: Request, res: Response) {
     }
 
     const profileFields = generateProfile(req);
+
     const user = getAuthenticatedUser(req);
 
-    const profile = await ProfileModel.findOneAndUpdate(
+    const profile = await ProfileModel.findOneAndReplace(
       {
         user: user.id,
       },
-      { $set: profileFields },
+      profileFields,
       { new: true }
-    );
+    ).populate("user", ["name", "avatar"]);
 
     if (profile) {
       response = new BaseResponse({ data: profile });
@@ -40,9 +41,11 @@ async function createProfile(req: Request, res: Response) {
       throw { error: { handle: "handle already exists" } };
     }
 
-    const newProfile = await new ProfileModel(profileFields).save();
-    response = new BaseResponse({ data: newProfile });
-    res.json(response);
+    const newProfile = await new ProfileModel(
+      removeEmpty(profileFields)
+    ).save();
+    response = new BaseResponse({ data: newProfile, statusCode: 201 });
+    res.status(201).json(response);
   } catch (error) {
     response = new BaseResponse({ success: false, statusCode: 400 });
     if (error.error) response.error = error.error;
@@ -68,9 +71,7 @@ const generateProfile = (req: Request) => {
   ];
 
   mainKeys.forEach((key) => {
-    if (req.body[key])
-      profile[key] =
-        key === "skills" ? req.body[key].split(",") : req.body[key];
+    profile[key] = key === "skills" ? req.body[key].split(",") : req.body[key];
   });
 
   const social: { [key: string]: string } = {};
@@ -83,35 +84,10 @@ const generateProfile = (req: Request) => {
   ];
 
   socialKeys.forEach((key) => {
-    if (req.body[key]) social[key] = req.body[key];
+    social[key] = req.body[key];
   });
 
-  if (Object.keys(social).length > 0) profile.social = social;
+  profile.social = social;
 
-  return profile;
+  return removeEmpty(profile);
 };
-
-const cpValidateHandle = () => {
-  return body("handle")
-    .trim()
-    .isLength({ min: 3, max: 40 })
-    .withMessage("handle must be between 3 and 40 characters");
-};
-
-const cpValidateStatus = () => {
-  return body("status")
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage("status is required");
-};
-
-const cpValidateSkills = () => {
-  return body("skills")
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage("skills is required");
-};
-
-export { createProfile, cpValidateHandle, cpValidateStatus, cpValidateSkills };
