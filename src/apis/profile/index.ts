@@ -10,6 +10,8 @@ import {
 import addEducation from "./addEducation";
 import addExperience from "./addExperience";
 import createProfile from "./createProfile";
+import deleteEducation from "./deleteEducation";
+import deleteExperience from "./deleteExperience";
 import getAllProfiles from "./getAllProfiles";
 
 import getProfile from "./getProfile";
@@ -88,5 +90,17 @@ profileRouter.post(
   addExValidateField("from"),
   addEducation
 );
+
+//@route   DELETE api/profile/experience/:exp_id
+//@desc    delete experience from profile
+//access   private
+
+profileRouter.delete("/experience/:exp_id", authMiddleware, deleteExperience);
+
+//@route   DELETE api/profile/education/:edu_id
+//@desc    delete education from profile
+//access   private
+
+profileRouter.delete("/education/:edu_id", authMiddleware, deleteEducation);
 
 export default profileRouter;

@@ -20,7 +20,7 @@ export default async function createProfile(req: Request, res: Response) {
 
     const user = getAuthenticatedUser(req);
 
-    const profile = await ProfileModel.findOneAndReplace(
+    const profile = await ProfileModel.findByIdAndUpdate(
       {
         user: user.id,
       },
@@ -44,7 +44,13 @@ export default async function createProfile(req: Request, res: Response) {
     const newProfile = await new ProfileModel(
       removeEmpty(profileFields)
     ).save();
-    response = new BaseResponse({ data: newProfile, statusCode: 201 });
+    const populatedProfile = await newProfile
+      .populate({ path: "user", select: ["name", "avatar"] })
+      .execPopulate();
+    response = new BaseResponse({
+      data: populatedProfile,
+      statusCode: 201,
+    });
     res.status(201).json(response);
   } catch (error) {
     response = new BaseResponse({ success: false, statusCode: 400 });

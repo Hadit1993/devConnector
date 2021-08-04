@@ -11,7 +11,7 @@ interface Profile {
   skills: string[];
   bio?: string;
   githubUsername?: string;
-  experience: {
+  experience: ({
     title: string;
     company: string;
     location?: string;
@@ -19,9 +19,9 @@ interface Profile {
     to?: Date;
     current: boolean;
     description?: string;
-  }[];
+  } & Document)[];
 
-  education: {
+  education: ({
     school: string;
     degree: string;
     fieldOfStudy: string;
@@ -29,7 +29,7 @@ interface Profile {
     to?: Date;
     current: boolean;
     description?: string;
-  }[];
+  } & Document)[];
 
   social: {
     youtube?: string;

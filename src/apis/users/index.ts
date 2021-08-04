@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authMiddleware from "../../middlewares/authMiddleware";
 import {
   loginValidateEmail,
   loginValidatePassword,
@@ -10,6 +11,7 @@ import {
   registerValidatePassword,
   registerValidateConfirmPassword,
 } from "../../validation/users/register";
+import deleteUser from "./deleteUser";
 import login from "./login";
 import register from "./register";
 
@@ -38,5 +40,11 @@ usersRouter.post(
   loginValidatePassword(),
   login
 );
+
+//@route   DELETE api/users
+//@desc    delete the user and its profile
+//access   private
+
+usersRouter.delete("/", authMiddleware, deleteUser);
 
 export default usersRouter;
