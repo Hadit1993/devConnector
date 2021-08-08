@@ -5,7 +5,7 @@ const registerValidateName = () =>
   body("name")
     .trim()
     .isLength({ min: 3, max: 30 })
-    .withMessage("name must be between 2 and 30 characters");
+    .withMessage("name must be between 3 and 30 characters");
 
 const registerValidateEmail = () =>
   body("email")
