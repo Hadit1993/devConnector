@@ -12,6 +12,7 @@ export default function Landing() {
   const history = useHistory();
 
   useEffect(() => {
+    console.log({ isAuthenticated });
     if (isAuthenticated) history.replace("/dashboard");
   }, [history, isAuthenticated]);
 

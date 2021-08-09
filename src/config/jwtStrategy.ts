@@ -9,7 +9,7 @@ const strategy = new Strategy(
   },
   async (payload, done) => {
     try {
-      const user = await UserModel.findById(payload.id);
+      const user = await UserModel.findById(payload._id);
       if (user) return done(null, user);
 
       throw new Error("user not found");

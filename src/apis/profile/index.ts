@@ -62,8 +62,6 @@ profileRouter.get("/user/:user_id", getProfileByUserId);
 
 profileRouter.get("/all", getAllProfiles);
 
-profileRouter.post("");
-
 //@route   POST api/profile/experience
 //@desc    add experience to profile
 //access   private

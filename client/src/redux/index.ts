@@ -1,12 +1,16 @@
-import { createStore } from "redux";
+import { applyMiddleware, compose, createStore } from "redux";
 import rootReducer, { initialGlobalState } from "./reducers";
 import { Dispatch } from "redux";
+
+import deleteProfileMiddleware from "./middlewares/deleteProfileMiddleware";
+
+const composeEnhancers =
+  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const store = createStore(
   rootReducer,
   initialGlobalState,
-  (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__()
+  composeEnhancers(applyMiddleware(deleteProfileMiddleware))
 );
 
 export type ReduxAction<T = any> = { type: T; payload?: any };

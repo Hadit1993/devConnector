@@ -10,12 +10,13 @@ import jwtDecode from "jwt-decode";
 import { useEffect } from "react";
 import { useAuthActions } from "./redux/actions/authActions";
 import User from "./models/User";
+import Dashboard from "./components/dashboard/Dashboard";
+import PrivateRoute from "./components/common/PrivateRoute";
 
 function App() {
   const { setUser, logoutUser } = useAuthActions();
 
   useEffect(() => {
-    console.log("app opened");
     const token = localStorage.getItem("authToken");
     if (token) {
       const user = jwtDecode<User & { iat?: number; exp?: number }>(token);
@@ -46,9 +47,9 @@ function App() {
         <NavbAr />
         <div style={{ display: "flex", flexGrow: 1, flexDirection: "column" }}>
           <Route exact path="/" component={Landing} />
-
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
+          <PrivateRoute exact path="/dashboard" component={Dashboard} />
         </div>
 
         <Footer />
