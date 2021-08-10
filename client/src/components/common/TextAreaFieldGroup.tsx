@@ -1,21 +1,19 @@
 import { ChangeEventHandler, CSSProperties } from "react";
 
-const TextFieldGroup = (props: {
+const TextAreaFieldGroup = (props: {
   value?: string;
   style?: CSSProperties;
   error?: string;
   placeHolder: string;
-  type?: string;
   name?: string;
   info?: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
+  onChange: ChangeEventHandler<HTMLTextAreaElement>;
 }) => {
   return (
     <>
-      <input
+      <textarea
         value={props.value}
         style={props.style}
-        type={props.type || "text"}
         className={`${
           props.error ? "is-invalid" : ""
         } form-control form-control-lg`}
@@ -30,4 +28,4 @@ const TextFieldGroup = (props: {
   );
 };
 
-export default TextFieldGroup;
+export default TextAreaFieldGroup;

@@ -11,7 +11,7 @@ import axios, { AxiosResponse } from "axios";
 import BaseResponse from "../../models/BaseResponse";
 import { useCallback, useMemo } from "react";
 
-type ProfileInfo = {
+export type ProfileInfo = {
   handle?: string;
   status?: string;
   skills?: string;
@@ -67,24 +67,28 @@ export const useProfileActions = () => {
   );
 
   const createProfile = useCallback(
-    async (info: ProfileInfo) => {
-      try {
-        setLoading(true);
-        const result = await axios.post<
-          any,
-          AxiosResponse<BaseResponse<Profile>>
-        >("/api/profile", info);
+    (info: ProfileInfo) => {
+      return new Promise<Profile>(async (resolve, reject) => {
+        try {
+          setLoading(true);
+          const result = await axios.post<
+            any,
+            AxiosResponse<BaseResponse<Profile>>
+          >("/api/profile", info);
 
-        setProfile(result.data.data);
-        setError({});
-      } catch (error) {
-        if (error.response && error.response.data) {
-          const response: BaseResponse<any> = error.response.data;
-          setError(response.error || {});
-        } else setError({});
-      } finally {
-        setLoading(false);
-      }
+          setProfile(result.data.data);
+          setError({});
+          resolve(result.data.data!);
+        } catch (error) {
+          if (error.response && error.response.data) {
+            const response: BaseResponse<any> = error.response.data;
+            setError(response.error || {});
+          } else setError({});
+          reject(error);
+        } finally {
+          setLoading(false);
+        }
+      });
     },
     [setError, setLoading, setProfile]
   );

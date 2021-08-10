@@ -1,12 +1,32 @@
-import { useSelector } from "react-redux";
-import { Redirect, Route, RouteProps } from "react-router-dom";
+import { ComponentType } from "react";
+import {
+  Redirect,
+  Route,
+  RouteComponentProps,
+  RouteProps,
+} from "react-router-dom";
 
-import { GlobalState } from "../../redux/reducers";
-import { AuthState } from "../../redux/reducers/authReducer";
+export default function PrivateRoute(
+  props: RouteProps & { condition: boolean; redirect: string }
+) {
+  // return (
+  //   <Route
+  //     {...props}
+  //     render={(routeProps) => {
+  //       console.log({ routeProps });
+  //       const Component = props.component as ComponentType<RouteComponentProps>;
 
-export default function PrivateRoute(props: RouteProps) {
-  const { isAuthenticated } = useSelector<GlobalState, AuthState>(
-    (state) => state.auth
+  //       return props.condition ? (
+  //         <Component {...routeProps} />
+  //       ) : (
+  //         <Redirect to={props.redirect} />
+  //       );
+  //     }}
+  //   />
+  // );
+  return props.condition ? (
+    <Route {...props} />
+  ) : (
+    <Redirect to={props.redirect} />
   );
-  return isAuthenticated ? <Route {...props} /> : <Redirect to="/login" />;
 }

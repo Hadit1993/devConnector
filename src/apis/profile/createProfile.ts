@@ -21,9 +21,7 @@ export default async function createProfile(req: Request, res: Response) {
     const user = getAuthenticatedUser(req);
 
     const profile = await ProfileModel.findByIdAndUpdate(
-      {
-        user: user.id,
-      },
+      user.id,
       profileFields,
       { new: true }
     ).populate("user", ["name", "avatar"]);
@@ -44,6 +42,7 @@ export default async function createProfile(req: Request, res: Response) {
     const newProfile = await new ProfileModel(
       removeEmpty(profileFields)
     ).save();
+
     const populatedProfile = await newProfile
       .populate({ path: "user", select: ["name", "avatar"] })
       .execPopulate();

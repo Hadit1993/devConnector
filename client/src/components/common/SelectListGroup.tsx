@@ -1,28 +1,32 @@
 import { ChangeEventHandler, CSSProperties } from "react";
 
-const TextFieldGroup = (props: {
+const SelectListGroup = (props: {
   value?: string;
   style?: CSSProperties;
   error?: string;
-  placeHolder: string;
-  type?: string;
   name?: string;
   info?: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
+  onChange: ChangeEventHandler<HTMLSelectElement>;
+  options: { label: string; value: string }[];
 }) => {
+  const selectOptions = props.options.map((opt) => (
+    <option key={opt.label} value={opt.value}>
+      {opt.label}
+    </option>
+  ));
   return (
     <>
-      <input
+      <select
         value={props.value}
         style={props.style}
-        type={props.type || "text"}
         className={`${
           props.error ? "is-invalid" : ""
         } form-control form-control-lg`}
-        placeholder={props.placeHolder}
         name={props.name}
         onChange={props.onChange}
-      />
+      >
+        {selectOptions}
+      </select>
 
       <div className="error-input">{props.error || ""}</div>
       {props.info && <p className="form-text text-muted">{props.info}</p>}
@@ -30,4 +34,4 @@ const TextFieldGroup = (props: {
   );
 };
 
-export default TextFieldGroup;
+export default SelectListGroup;

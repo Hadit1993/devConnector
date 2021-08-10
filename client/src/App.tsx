@@ -1,4 +1,4 @@
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import "./App.css";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -12,9 +12,16 @@ import { useAuthActions } from "./redux/actions/authActions";
 import User from "./models/User";
 import Dashboard from "./components/dashboard/Dashboard";
 import PrivateRoute from "./components/common/PrivateRoute";
+import CreateProfile from "./components/create-profile/CreateProfile";
+import { useSelector } from "react-redux";
+import { GlobalState } from "./redux/reducers";
+import { AuthState } from "./redux/reducers/authReducer";
 
 function App() {
   const { setUser, logoutUser } = useAuthActions();
+  const { isAuthenticated } = useSelector<GlobalState, AuthState>(
+    (state) => state.auth
+  );
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -45,11 +52,45 @@ function App() {
         }}
       >
         <NavbAr />
+
         <div style={{ display: "flex", flexGrow: 1, flexDirection: "column" }}>
-          <Route exact path="/" component={Landing} />
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/login" component={Login} />
-          <PrivateRoute exact path="/dashboard" component={Dashboard} />
+          <Switch>
+            <PrivateRoute
+              exact
+              path="/"
+              component={Landing}
+              condition={!isAuthenticated}
+              redirect="/dashboard"
+            />
+            <PrivateRoute
+              exact
+              path="/register"
+              component={Register}
+              condition={!isAuthenticated}
+              redirect="/dashboard"
+            />
+            <PrivateRoute
+              exact
+              path="/login"
+              component={Login}
+              condition={!isAuthenticated}
+              redirect="/dashboard"
+            />
+            <PrivateRoute
+              exact
+              path="/dashboard"
+              component={Dashboard}
+              condition={isAuthenticated}
+              redirect="/"
+            />
+            <PrivateRoute
+              exact
+              condition={isAuthenticated}
+              redirect="/"
+              path="/create-profile"
+              component={CreateProfile}
+            />
+          </Switch>
         </div>
 
         <Footer />

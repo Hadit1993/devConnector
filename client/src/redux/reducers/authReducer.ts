@@ -15,12 +15,14 @@ export interface AuthState {
   user?: User;
   signupError: AuthError;
   loginError: Omit<AuthError, "name" | "confirmPassword">;
+  isReady: boolean;
 }
 
 export const initialAuthState: AuthState = {
   isAuthenticated: false,
   signupError: {},
   loginError: {},
+  isReady: false,
 };
 
 export function authReducer(
@@ -41,6 +43,7 @@ export function authReducer(
         ...state,
         user,
         isAuthenticated: user ? true : false,
+        isReady: true,
       };
 
     case "SET_SIGNUP_ERROR":
