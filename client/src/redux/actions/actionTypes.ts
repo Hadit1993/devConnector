@@ -10,3 +10,20 @@ export type ProfileActionTypes =
   | "SET_PROFILE_ERROR"
   | "SET_EXPERIENCE_ERROR"
   | "SET_EDUCATION_ERROR";
+
+export type LocalProfileActionType =
+  | "SET_HANDLE"
+  | "SET_COMPANY"
+  | "SET_WEBSITE"
+  | "SET_LOCATION"
+  | "SET_STATUS"
+  | "SET_SKILLS"
+  | "SET_BIO"
+  | "SET_GITHUB_USERNAME"
+  | "SET_YOUTUBE"
+  | "SET_FACEBOOK"
+  | "SET_LINKEDIN"
+  | "SET_INSTAGRAM"
+  | "SET_TWITTER"
+  | "DISPLAY_SOCIAL_INPUTS"
+  | "REPLACE_PROFILE_INFO";

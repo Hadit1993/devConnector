@@ -4,11 +4,12 @@ const TextFieldGroup = (props: {
   value?: string;
   style?: CSSProperties;
   error?: string;
-  placeHolder: string;
+  placeHolder?: string;
   type?: string;
   name?: string;
   info?: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
+  disabled?: boolean;
 }) => {
   return (
     <>
@@ -22,9 +23,15 @@ const TextFieldGroup = (props: {
         placeholder={props.placeHolder}
         name={props.name}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
 
-      <div className="error-input">{props.error || ""}</div>
+      <div
+        style={{ marginBottom: props.info ? 0 : 10 }}
+        className="error-input"
+      >
+        {props.error || ""}
+      </div>
       {props.info && <p className="form-text text-muted">{props.info}</p>}
     </>
   );

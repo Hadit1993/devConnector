@@ -5,7 +5,7 @@ import { AuthError } from "../reducers/authReducer";
 import axios from "axios";
 import BaseResponse from "../../models/BaseResponse";
 import { AuthActionType } from "./actionTypes";
-import { useHistory } from "react-router-dom";
+
 import { useCallback, useMemo } from "react";
 
 export const useAuthActions = () => {
@@ -14,7 +14,6 @@ export const useAuthActions = () => {
     () => dispatchAction<AuthActionType>(dispatch),
     [dispatch]
   );
-  const history = useHistory();
 
   const setUser = useCallback(
     (user?: User, token?: string) =>
@@ -52,8 +51,6 @@ export const useAuthActions = () => {
         const data = result.data.data;
 
         setUser(data?.user, data?.token);
-
-        history.replace("/dashboard");
       } catch (error) {
         if (error.response && error.response.data) {
           const response: BaseResponse<any> = error.response.data;
@@ -61,7 +58,7 @@ export const useAuthActions = () => {
         } else setSignupError({});
       }
     },
-    [history, setSignupError, setUser]
+    [setSignupError, setUser]
   );
 
   const loginUser = useCallback(
@@ -74,8 +71,6 @@ export const useAuthActions = () => {
         const data = result.data.data;
 
         setUser(data?.user, data?.token);
-
-        history.replace("/dashboard");
       } catch (error) {
         if (error.response && error.response.data) {
           const response: BaseResponse<any> = error.response.data;
@@ -83,8 +78,26 @@ export const useAuthActions = () => {
         } else setLoginError({});
       }
     },
-    [history, setLoginError, setUser]
+    [setLoginError, setUser]
   );
 
-  return { setUser, registerUser, loginUser, logoutUser };
+  const deleteAccount = useCallback(() => {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        if (window.confirm("Are you sure? This can NOT be undone!")) {
+          await axios.delete<BaseResponse<any>>("/api/users");
+
+          logoutUser();
+          resolve();
+        } else {
+          throw new Error("delete account refused");
+        }
+      } catch (error) {
+        console.log({ error });
+        reject(error);
+      }
+    });
+  }, [logoutUser]);
+
+  return { setUser, registerUser, loginUser, logoutUser, deleteAccount };
 };

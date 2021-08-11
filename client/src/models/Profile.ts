@@ -12,26 +12,28 @@ export default interface Profile {
   githubUsername?: string;
   experience: Experience[];
   education: Education[];
-  social: Social;
+  social?: Social;
   date: Date;
 }
 
 export interface Experience {
+  _id: string;
   title: string;
   company: string;
   location?: string;
-  from: Date;
-  to?: Date;
+  from: string;
+  to?: string;
   current: boolean;
   description?: string;
 }
 
 export interface Education {
+  _id: string;
   school: string;
   degree: string;
   fieldOfStudy: string;
-  from: Date;
-  to?: Date;
+  from: string;
+  to?: string;
   current: boolean;
   description?: string;
 }

@@ -93,18 +93,22 @@ export const useProfileActions = () => {
     [setError, setLoading, setProfile]
   );
 
-  const getProfile = useCallback(async () => {
-    try {
-      setLoading(true);
-      console.log("hello");
-      const result = await axios.get<BaseResponse<Profile>>("/api/profile");
+  const getProfile = useCallback(() => {
+    return new Promise<Profile>(async (resolve, reject) => {
+      try {
+        setLoading(true);
 
-      setProfile(result.data.data);
-    } catch (error) {
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+        const result = await axios.get<BaseResponse<Profile>>("/api/profile");
+
+        setProfile(result.data.data);
+
+        resolve(result.data.data!);
+      } catch (error) {
+        reject(error);
+      } finally {
+        setLoading(false);
+      }
+    });
   }, [setLoading, setProfile]);
 
   const getProfileByHandle = useCallback(
@@ -151,46 +155,54 @@ export const useProfileActions = () => {
   }, [setLoading, setProfiles]);
 
   const addExperience = useCallback(
-    async (info: Partial<Experience>) => {
-      try {
-        setLoading(true);
-        const result = await axios.post<BaseResponse<Profile>>(
-          "/api/profile/experience",
-          info
-        );
-        setLoading(false);
-        setProfile(result.data.data);
-        setExperienceError({});
-      } catch (error) {
-        setLoading(false);
-        if (error.response && error.response.data) {
+    (info: Partial<Experience>) => {
+      return new Promise<Profile>(async (resolve, reject) => {
+        try {
+          setLoading(true);
+          const result = await axios.post<BaseResponse<Profile>>(
+            "/api/profile/experience",
+            info
+          );
           setLoading(false);
-          const response: BaseResponse<any> = error.response.data;
-          setExperienceError(response.error || {});
-        } else setExperienceError({});
-      }
+          setProfile(result.data.data);
+          setExperienceError({});
+          resolve(result.data.data!);
+        } catch (error) {
+          setLoading(false);
+          if (error.response && error.response.data) {
+            setLoading(false);
+            const response: BaseResponse<any> = error.response.data;
+            setExperienceError(response.error || {});
+          } else setExperienceError({});
+          reject(error);
+        }
+      });
     },
     [setLoading, setProfile, setExperienceError]
   );
 
   const addEducation = useCallback(
     async (info: Partial<Education>) => {
-      try {
-        setLoading(true);
-        const result = await axios.post<BaseResponse<Profile>>(
-          "/api/profile/education",
-          info
-        );
-        setLoading(false);
-        setProfile(result.data.data);
-        setEducationError({});
-      } catch (error) {
-        setLoading(false);
-        if (error.response && error.response.data) {
-          const response: BaseResponse<any> = error.response.data;
-          setEducationError(response.error || {});
-        } else setEducationError({});
-      }
+      return new Promise<Profile>(async (resolve, reject) => {
+        try {
+          setLoading(true);
+          const result = await axios.post<BaseResponse<Profile>>(
+            "/api/profile/education",
+            info
+          );
+          setLoading(false);
+          setProfile(result.data.data);
+          setEducationError({});
+          resolve(result.data.data!);
+        } catch (error) {
+          setLoading(false);
+          if (error.response && error.response.data) {
+            const response: BaseResponse<any> = error.response.data;
+            setEducationError(response.error || {});
+          } else setEducationError({});
+          reject(error);
+        }
+      });
     },
     [setLoading, setProfile, setEducationError]
   );

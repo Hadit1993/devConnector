@@ -1,11 +1,16 @@
-import { FormEventHandler, useReducer } from "react";
+import { FormEventHandler, useEffect, useReducer } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import Profile from "../../models/Profile";
 
 import { LocalProfileActionType } from "../../redux/actions/actionTypes";
-import { useProfileActions } from "../../redux/actions/profileActions";
+import {
+  ProfileInfo,
+  useProfileActions,
+} from "../../redux/actions/profileActions";
 import { GlobalState } from "../../redux/reducers";
 import { localProfileReducer } from "../../redux/reducers/localProfileReducer";
+
 import { ProfileState } from "../../redux/reducers/profileReducer";
 import statusOptions from "../../utils/statusOptions";
 import InputGroup from "../common/InputGroup";
@@ -13,7 +18,25 @@ import SelectListGroup from "../common/SelectListGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
 import TextFieldGroup from "../common/TextFieldGroup";
 
-export default function CreateProfile() {
+function convertProfileToInfo(profile: Profile): ProfileInfo {
+  return {
+    handle: profile.handle,
+    status: profile.status,
+    skills: profile.skills.join(","),
+    company: profile.company,
+    website: profile.website,
+    location: profile.location,
+    bio: profile.bio,
+    githubUsername: profile.githubUsername,
+    youtube: profile.social?.youtube,
+    instagram: profile.social?.instagram,
+    facebook: profile.social?.facebook,
+    twitter: profile.social?.twitter,
+    linkedin: profile.social?.linkedin,
+  };
+}
+
+export default function EditProfile() {
   const [state, dispatch] = useReducer(localProfileReducer, {
     displaySocialInputs: false,
   });
@@ -21,7 +44,7 @@ export default function CreateProfile() {
     (state) => state.profile
   );
 
-  const { createProfile } = useProfileActions();
+  const { createProfile, getProfile } = useProfileActions();
   const history = useHistory();
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -38,12 +61,25 @@ export default function CreateProfile() {
     dispatch({ type, payload: newValue });
   };
 
+  useEffect(() => {
+    getProfile()
+      .then((profile) => {
+        dispatch({
+          type: "REPLACE_PROFILE_INFO",
+          payload: convertProfileToInfo(profile),
+        });
+      })
+      .catch((error) => {
+        console.log({ error });
+      });
+  }, [getProfile]);
+
   return (
     <div style={{ padding: 16 }}>
-      <h1 className="display-4 text-center">Create Your Profile</h1>
-      <p className="lead text-center">
+      <h1 className="display-4 text-center">Edit Your Profile</h1>
+      {/* <p className="lead text-center">
         Lets get some information to make your profile stand out
-      </p>
+      </p> */}
       <small className="d-block pb-3 text-center">* = required fields</small>
 
       <form
